@@ -1,7 +1,10 @@
 //L'application requiert l'utilisation du module Express.
 //La variable express nous permettra d'utiliser les fonctionnalités du module Express. 
 
-var express = require('express'); 
+var express = require('express');
+
+var upload = require("multer")()
+
 // Nous définissons ici les paramètres du serveur.
 var hostname = 'localhost'; 
 var port = 3000; 
@@ -20,6 +23,13 @@ connection.connect();
 connection.end();
 
 
+//POST
+app.post("/pisc",upload.none(),function(req,res){
+	console.log("insertion de la piscine", req.body["longueur"], " en base...")
+	//console.log(req)
+	//connection.query('INSERT INTO people (name, age, address) VALUES (?, ?, ?)', ['Larry', '41', 'California, USA']);
+    res.json({message : "Ajoute une nouvelle piscine à la liste", methode : req.method});
+})
 
  
 //Afin de faciliter le routage (les URL que nous souhaitons prendre en charge dans notre API), nous créons un objet Router.
@@ -39,7 +49,9 @@ myRouter.route('/piscines/:id')
 })
 //POST
 .post(function(req,res){
-	connection.query('INSERT INTO people (name, age, address) VALUES (?, ?, ?)', ['Larry', '41', 'California, USA']);
+	console.log("insertion de la piscine", req.body, " en base...")
+	console.log(req)
+	//connection.query('INSERT INTO people (name, age, address) VALUES (?, ?, ?)', ['Larry', '41', 'California, USA']);
     res.json({message : "Ajoute une nouvelle piscine à la liste", methode : req.method});
 })
 //PUT
