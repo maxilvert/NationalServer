@@ -97,15 +97,36 @@ app.delete("/:table/:id",upload.none(),function(req,res,field){
 
 //Permet avec la méthode get de demander d'avoir la liste des élèves en le demandant dans l'url
 app.get("/:table",upload.none(),function(req,res,field){
-	console.log("Voici la liste des éléve ", req.body["Nom"],req.body["Prenom"],req.body["Age"], " en base...")
-	connection.query('SELECT*FROM '+ req.params["table"], function(err,result){
-		if (err) {
-			console.error(err.stack);
-		}
-		else{
-			res.json({message : result , methode : req.method});
-		}
-	});
+	if (req.query !== {}) {
+		var obj = Object.entries(req.query)
+		var TabPut=[]
+		var i = 0
+		obj.forEach(function(element) {
+			if (typeof element[1] == 'string') {
+				element[1] = "'" + element[1] + "'"
+			}
+			TabPut[i] = element.join("=")
+			i++
+		})
+		var str = TabPut.join(' AND ');
+		connection.query('SELECT*FROM '+ req.params["table"] + ' WHERE ' + str, function(err,result){
+			if (err) {
+				console.error(err.stack);
+			}
+			else{
+				res.json({message : result , methode : req.method});
+			}
+		});
+	} else {
+		connection.query('SELECT*FROM '+ req.params["table"], function(err,result){
+			if (err) {
+				console.error(err.stack);
+			}
+			else{
+				res.json({message : result , methode : req.method});
+			}
+		});
+	}
 })
 
 app.get('/:table/:id',upload.none(),function(req,res,field){
