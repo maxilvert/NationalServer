@@ -32,38 +32,36 @@ connection.connect(function(err) {
 app.post("/:table",upload.none(),function(req,res,field){
 	var nom_bool=false;
 	var prenom_bool= false;
-	var id_centre_bool=false;
+	var id_centres_bool=false;
 	var mail_bool=false;
 	var mdp_bool=false;
-	console.log("hello")
-	var obj = Object.entries(req.body)
+	var obj = Object.entries(req.body);
 	var TabChamp=[]
 	obj.forEach(function(element) {
-		if (element[0]=="Nom") {
+		if (element[0]=="nom") {
 			nom_bool=true;
 			TabChamp[0] = element[1];
-			console.log("tetet");
 		}
-		else if (element[0]=="Prenom") {
+		else if (element[0]=="prenom") {
 			prenom_bool=true;
 			TabChamp[1] = element[1];
 		}
-		else if (element[0]=="id_centre") {
+		else if (element[0]=="id_centres") {
 			id_centre_bool=true;
 			TabChamp[2] = element[1];
 		}
-		else if (element[0]=="mail") {
+		else if (element[0]=="email") {
 			mail_bool=true
 			TabChamp[3] = element[1];
 		}
-		else if (element[0]=="mdp") {
+		else if (element[0]=="password") {
 			mdp_bool=true
 			TabChamp[4] = element[1];
 		}
 	})
 
 	if (nom_bool && prenom_bool && id_centre_bool && mail_bool && mdp_bool) {
-		var sql = 'INSERT INTO '+ req.params["table"] +' (Nom, Prenom ,id_centre, mail, mdp) values (?,?,?,?,?)';
+		var sql = 'INSERT INTO '+ req.params["table"] +' (nom, prenom ,id_centres, email, password) values (?,?,?,?,?)';
 		var champ = [TabChamp[0],TabChamp[1],TabChamp[2],TabChamp[3],TabChamp[4]];
 		sql = mysql.format(sql, champ);
 		connection.query(sql, function(err,result,req,field)
@@ -73,7 +71,7 @@ app.post("/:table",upload.none(),function(req,res,field){
 				console.error(err.stack);
 			}
 			else{
-				res.json({message : result, methode : "post"});
+				res.json(result);
 			};
 
 		})
@@ -89,15 +87,14 @@ app.delete("/:table/:id",upload.none(),function(req,res,field){
 			console.error(err.stack);
 		}
 		else{
-			console.log(result)
-			res.json({message : result , methode : req.method});
+			res.json(result);
 		}
 	});
 })
 
 //Permet avec la méthode get de demander d'avoir la liste des élèves en le demandant dans l'url
 app.get("/:table",upload.none(),function(req,res,field){
-	if (req.query !== {}) {
+	if (Object.keys(req.query).length !== 0) {
 		var obj = Object.entries(req.query)
 		var TabPut=[]
 		var i = 0
@@ -114,7 +111,11 @@ app.get("/:table",upload.none(),function(req,res,field){
 				console.error(err.stack);
 			}
 			else{
-				res.json({message : result , methode : req.method});
+				if (result.length == 1) {
+					res.json(result[0]);
+				} else {
+					res.json(result);
+				}
 			}
 		});
 	} else {
@@ -123,7 +124,11 @@ app.get("/:table",upload.none(),function(req,res,field){
 				console.error(err.stack);
 			}
 			else{
-				res.json({message : result , methode : req.method});
+				if (result.length == 1) {
+					res.json(result[0]);
+				} else {
+					res.json(result);
+				}
 			}
 		});
 	}
@@ -136,8 +141,11 @@ app.get('/:table/:id',upload.none(),function(req,res,field){
 			console.error(err.stack);
 		}
 		else{
-			console.log(result)
-			res.json({message : result , methode : req.method});
+			if (result.length == 1) {
+				res.json(result[0]);
+			} else {
+				res.json(result);
+			}
 		}
 	});
 })
@@ -163,8 +171,7 @@ app.put("/:table/:id",upload.none(),function(req,res,field){
 			console.error(err.stack);
 		}
 		else{
-			console.log(result)
-			res.json({message : result , methode : req.method});
+			res.json(result);
 		}
 	});
 })
